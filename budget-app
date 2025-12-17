@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monthly Budget App</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff0f6;
+      padding: 20px;
+      color: #4a2c3a;
+    }
+
+    h1 {
+      text-align: center;
+      color: #d63384;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    button {
+      background: #f06595;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #f3c4d9;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .paid {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+<h1>💗 Monthly Budget 💗</h1>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Income & Budget</h2>
+
+    <label>Monthly Income (£)</label>
+    <input type="number" id="income" value="350">
+
+    <label>Fixed Costs (£)</label>
+    <input type="number" id="fixed" value="50">
+
+    <label>Savings (£)</label>
+    <input type="number" id="savings" value="30">
+
+    <button onclick="updateBudget()">Update</button>
+
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Fixed Costs</h2>
+    <ul id="fixedList">
+      <li><input type="checkbox" onclick="togglePaid(this)"> Phone Bill</li>
+      <li><input type="checkbox" onclick="togglePaid(this)"> Lenses</li>
+    </ul>
+
+    <h2>Savings</h2>
+    <ul>
+      <li><input type="checkbox" onclick="togglePaid(this)"> Savings Sent</li>
+    </ul>
+
+    <h2>Disposable / Wishlist</h2>
+    <ul id="wishList"></ul>
+
+    <input type="text" id="wishInput" placeholder="Add wishlist item">
+    <button onclick="addWish()">Add</button>
+  </div>
+
+</div>
+
+<script>
+  let chart;
+
+  function updateBudget() {
+    const income = Number(document.getElementById("income").value);
+    const fixed = Number(document.getElementById("fixed").value);
+    const savings = Number(document.getElementById("savings").value);
+    const disposable = income - fixed - savings;
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("chart"), {
+      type: "pie",
+      data: {
+        labels: ["Fixed", "Savings", "Disposable"],
+        datasets: [{
+          data: [fixed, savings, disposable],
+          backgroundColor: ["#ffb3c6", "#f783ac", "#faa2c1"]
+        }]
+      }
+    });
+  }
+
+  function togglePaid(cb) {
+    cb.parentElement.classList.toggle("paid");
+  }
+
+  function addWish() {
+    const input = document.getElementById("wishInput");
+    if (!input.value) return;
+
+    const li = document.createElement("li");
+    li.textContent = input.value;
+    document.getElementById("wishList").appendChild(li);
+    input.value = "";
+  }
+
+  updateBudget();
+</script>
+
+</body>
+</html>
